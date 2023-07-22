@@ -1,0 +1,5 @@
+# Hilt
+.hilt/
+
+# View Binding
+build/

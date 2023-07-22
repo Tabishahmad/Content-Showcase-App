@@ -1,0 +1,16 @@
+<resources>
+    <string name="app_name">Fitpeo</string>
+
+    <string name="listFragment_label">List Fragment</string>
+    <string name="book_detail_fragment_label">Detail Fragment</string>
+    <string name="favourite_fragment_label">Favourite Fragment</string>
+    <string name="response_error">No Data Found</string>
+    <string name="response_not_successful">Response Not Successful</string>
+
+    <!--SPLASH -->
+    <string name="start_text_splash">START</string>
+    <string name="faild_to_retrive">Failed to retrieve data</string>
+    <string name="loading">Loading...</string>
+    <string name="no_book_in_fav">NO ALBUM ADDED IN FAVOURITE</string>
+    <string name="not_implemented">NOT IMPLEMENTED</string>
+</resources>
