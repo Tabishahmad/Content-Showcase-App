@@ -12,7 +12,7 @@ Welcome to the Content Showcase app, a beautifully designed Android application 
 - Data Loading: Jetpack Paging library
 - Android Splash API Integration
 - Favorite Feature using ROOM DB
-- 
+
 **Features:**
 
 1. **Content Listing Page:** The app greets you with a visually appealing content listing page, featuring a captivating page title and a vertically scrolling grid. In portrait mode, the grid displays items in 3 columns, and in landscape mode, it expands to 5 columns, making the most of the screen real estate.
