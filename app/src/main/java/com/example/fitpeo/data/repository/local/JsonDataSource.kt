@@ -8,8 +8,9 @@ import com.example.fitpeo.data.repository.model.AlbumDTO
 import com.example.fitpeo.domain.model.Album
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
+import javax.inject.Inject
 
-class JsonDataSource(private val context: Context, private val fileNames: List<String>
+class JsonDataSource @Inject constructor(private val context: Context, private val fileNames: List<String>
 ) : PagingSource<Int, Album>() {
 
     override suspend fun load(params: LoadParams<Int>): LoadResult<Int, Album> {

@@ -1,10 +1,12 @@
-package com.example.fitpeo.presentation.list
+package com.example.fitpeo.presentation.favourite
 
 import android.content.Context
 import android.util.AttributeSet
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.fitpeo.domain.model.Album
+import com.example.fitpeo.presentation.list.FavListAdapter
+import com.example.fitpeo.presentation.list.ImageListAdapter
 
 class ImageRecyclerview : RecyclerView {
 
@@ -29,8 +31,8 @@ class ImageRecyclerview : RecyclerView {
         adapter = ImageListAdapter()
     }
 
-    private fun getMAdapter(): ImageListAdapter {
-        return adapter as ImageListAdapter
+    private fun getMAdapter(): FavListAdapter {
+        return adapter as FavListAdapter
     }
 
     fun setData(list: List<Album>) {
@@ -38,7 +40,7 @@ class ImageRecyclerview : RecyclerView {
     }
 
 
-    fun setItemClickListener(listener: ImageListAdapter.ItemClickListener) {
+    fun setItemClickListener(listener: FavListAdapter.ItemClickListener) {
         getMAdapter().setClickListener(listener)
     }
 

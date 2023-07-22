@@ -5,6 +5,7 @@ import android.view.View
 import android.widget.ImageButton
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.asLiveData
+import androidx.lifecycle.liveData
 import androidx.lifecycle.viewModelScope
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
@@ -18,53 +19,67 @@ import com.example.fitpeo.domain.usecase.UseCase
 import com.example.fitpeo.presentation.core.ViewState
 import com.example.fitpeo.presentation.core.base.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.channels.ConflatedBroadcastChannel
+import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class AlbumListViewModel @Inject constructor(private val useCase: UseCase, private val context: Context) :
     BaseViewModel() {
 
-    private val uiStateFlow = MutableStateFlow<ViewState<List<Album>>>(ViewState.Loading(true))
-    fun getviewStateFlow(): StateFlow<ViewState<List<Album>>> = uiStateFlow
+    private val _uiStateFlow = MutableStateFlow<ViewState>(ViewState.Loading)
+    val uiStateFlow = _uiStateFlow.asLiveData()
 
-//    private val _uiStateFlow = MutableStateFlow<ViewState>(ViewState.Loading(true))
-//    val uiStateFlow = _uiStateFlow.asLiveData()
+    fun fetchList() {
+        performCoroutineTask{
+            _uiStateFlow.value = ViewState.Loading
+            try {
+                useCase.getListUseCase.getAlbumList().collect { pagingData ->
+                    _uiStateFlow.value = ViewState.Success(pagingData)
+                }
+            } catch (e: Exception) {
+                _uiStateFlow.value = ViewState.Failure(context.getString(R.string.failed_to_retrieve))
+            }
+        }
+    }
+    fun setSearchQuery(query: String?) {
+        viewModelScope.launch {
+            trySendQuery(query)
+        }
+    }
 
+    private fun trySendQuery(query: String?) {
+        searchQueryChannel.trySend(query ?: "")
+    }
 
-    private val fileNames = listOf("data1.json", "data2.json", "data3.json")
+    private val searchQueryChannel = ConflatedBroadcastChannel<String>()
 
-
-//    fun fetchList(): Flow<PagingData<Album>> {
-//        return Pager(PagingConfig(pageSize = 20)) {
-//            JsonDataSource(context, fileNames)
-//        }.flow.cachedIn(viewModelScope)
-//    }
-
-     fun fetchList() = useCase.getListUseCase()
-
-//    fun fetchList() {
-//        performCoroutineTask{
-//            useCase.getListUseCase().collect { result ->
-//                uiStateFlow.emit(when (result) {
-//                    is NetworkResult.Success -> ViewState.Success(result.data)
-//                    is NetworkResult.Failure -> ViewState.Failure(context.getString(R.string.faild_to_retrive))
-//                })
-//            }
-//        }
-//    }
-
-//    fun fetchList() {
-//        performCoroutineTask{
-//            _uiStateFlow.emit(ViewState.Loading)
-//        }
-//    }
-//    val listData = Pager(PagingConfig(pageSize = 20, maxSize = 100)){
-//        JsonDataSource(context, "data1.json")
-//    }.flow.cachedIn(viewModelScope)
+    val searchLiveData: LiveData<ViewState> = liveData {
+        emit(ViewState.Loading)
+        try {
+            searchQueryChannel.asFlow()
+                .debounce(300) // Add a debounce to avoid making too many network requests
+                .flatMapLatest { query ->
+                    if (query.isNullOrEmpty()) {
+                        useCase.getListUseCase.getAlbumList()
+                    } else {
+                        useCase.getListUseCase.searchAlbums(query)
+                    }
+                }
+                .map { pagingData ->
+                    ViewState.Success(pagingData)
+                }
+                .catch { e ->
+                    ViewState.Failure(e.localizedMessage ?: "Failed to retrieve data")
+                }
+                .collect { value ->
+                    emit(value)
+                }
+        } catch (e: Exception) {
+            emit(ViewState.Failure(e.localizedMessage ?: "Failed to retrieve data"))
+        }
+    }
 
     fun handleFavoriteAlbum(view: View, album: Album) {
         performCoroutineTask {

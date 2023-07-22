@@ -44,7 +44,7 @@ class AlbumDetailFragment : BaseFragment<AlbumListViewModel, FragmentBookDetailB
         binding.textView.setText(string)
     }
     private fun setImage(string: String?){
-        binding.imageView.loadImageWithPicasso(requireContext(),string)
+        binding.imageView.setByName(requireContext(),string)
     }
 
     private fun setFavoriteAlbumResource(album: Album) {

@@ -4,13 +4,10 @@ import android.content.Context
 import android.view.View
 import android.widget.ImageView
 import android.widget.Toast
-import androidx.core.content.ContextCompat
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
 import com.example.fitpeo.R
-import com.example.fitpeo.data.repository.model.AlbumDTO
-import com.example.fitpeo.domain.model.Album
 import com.squareup.picasso.Picasso
 
 
@@ -27,12 +24,12 @@ fun ImageView.loadImageWithPicasso(context: Context, imageURL: String?) {
         .error(R.drawable.error_img)
         .into(this);
 }
-fun ImageView.byName(context: Context,resourceName: String?){
+fun ImageView.setByName(context: Context, resourceName: String?){
     val resourceId = getResourceIdByName(context, resourceName?.removeJpgExtension())
-
-
     if (resourceId != 0) {
         this.setImageResource(resourceId)
+    }else{
+        this.setImageResource(R.drawable.noimg)
     }
 }
 private fun getResourceIdByName(context: Context, resourceName: String?): Int {
@@ -65,8 +62,3 @@ fun <T> LiveData<T>.observeOnce(lifecycleOwner: LifecycleOwner, observer: Observ
         }
     })
 }
-//fun List<AlbumDTO>?.toAlbumList(): List<Album> {
-//    return this?.map { dto ->
-//        Album(dto.albumId, dto.id, dto.title, dto.url, dto.thumbnailUrl)
-//    } ?: emptyList()
-//}

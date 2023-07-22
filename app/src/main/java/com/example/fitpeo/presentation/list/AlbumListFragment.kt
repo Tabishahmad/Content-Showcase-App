@@ -6,10 +6,12 @@ import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
+import android.widget.Toast
 import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
+import androidx.paging.PagingData
 import androidx.paging.map
 import androidx.recyclerview.widget.GridLayoutManager
 import com.example.fitpeo.R
@@ -27,10 +29,11 @@ class AlbumListFragment : BaseFragment<AlbumListViewModel,FragmentBookListBindin
     R.layout.fragment_book_list
 ),ImageListAdapter.ItemClickListener {
     override val viewModel: AlbumListViewModel by activityViewModels()
-
+    lateinit var adapter : ImageListAdapter
     override fun init() {
         setHasOptionsMenu(true)
-//        viewModel.fetchList()
+        viewModel.fetchList()
+        adapter = ImageListAdapter()
     }
     private fun hideProgressBar(){
         binding.albumprogressBar.hide()
@@ -38,16 +41,16 @@ class AlbumListFragment : BaseFragment<AlbumListViewModel,FragmentBookListBindin
     private fun showProgressBar(){
         binding.albumprogressBar.show()
     }
-    private fun setupRecyclersView(list:List<Album>){
+    private fun setupRecyclersView(pagingData:PagingData<Album>){
         hideProgressBar()
         binding.albumrv.layoutManager = GridLayoutManager(requireContext(), getColumnCount())
-        var adapter = ImageListAdapter()
+        adapter.setClickListener(this)
+        binding.albumrv.adapter = adapter
         lifecycleScope.launch {
-            viewModel.fetchList().collect {
-                adapter.submitData(it)
-            }
+            adapter.submitData(pagingData)
         }
     }
+
     private fun getColumnCount(): Int {
         return if (resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) {
             5 // Number of columns in landscape orientation
@@ -57,7 +60,8 @@ class AlbumListFragment : BaseFragment<AlbumListViewModel,FragmentBookListBindin
     }
 
     override fun onItemClick(view: View, any: Any, index: Int) {
-        navigateToDetail(any as Album)
+//        navigateToDetail(any as Album)
+        requireContext().getString(R.string.NA_detail).showCustomToast(requireContext(), Toast.LENGTH_LONG)
     }
     private fun navigateToDetail(album: Album){
         val b = Bundle()
@@ -65,49 +69,68 @@ class AlbumListFragment : BaseFragment<AlbumListViewModel,FragmentBookListBindin
         findNavController().navigate(R.id.bookDetailFragment,b)
     }
     private fun navigateToFavourite(){
-        findNavController().navigate(R.id.favBookFragment)
+        requireContext().getString(R.string.NA_favourite).showCustomToast(requireContext(), Toast.LENGTH_LONG)
+//        findNavController().navigate(R.id.favBookFragment)
     }
-    private fun addSearchView(){
-        binding.searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener{
+    private fun handleSearchView(searchView: SearchView){
+        searchView.queryHint = requireContext().getString(R.string.search_album)
+        searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener{
             override fun onQueryTextSubmit(query: String?): Boolean {
-                TODO("Not yet implemented")
+                return false
             }
 
             override fun onQueryTextChange(newText: String?): Boolean {
-                TODO("Not yet implemented")
+                if (newText.isNullOrBlank() || newText.length >= 3) {
+                    viewModel.setSearchQuery(newText)
+                }
+                return true
             }
         })
     }
     override fun observeViewModel() {
-        hideProgressBar()
-        binding.albumrv.layoutManager = GridLayoutManager(requireContext(), getColumnCount())
-        var adapter = ImageListAdapter()
-        binding.albumrv.adapter = adapter
-        lifecycleScope.launch {
-            viewModel.fetchList().collect {pagingData->
-                adapter.submitData(pagingData)
+        performCoroutineTask {
+            viewModel.uiStateFlow.observe(viewLifecycleOwner){ viewState->
+                when(viewState){
+                    is ViewState.Loading ->
+                        showProgressBar()
+                    is ViewState.Success -> {
+                        hideProgressBar()
+                        setupRecyclersView(viewState.result)
+                    }
+                    is ViewState.Failure -> {
+                        hideProgressBar()
+                        viewState.failMessage.let {
+                            it.showCustomToast(requireContext())
+                        }
+                    }
+                }
+            }
+            viewModel.searchLiveData.observe(viewLifecycleOwner) { viewState ->
+                when (viewState) {
+                    is ViewState.Loading ->{}
+                    is ViewState.Success -> {
+                        hideProgressBar()
+                        setupRecyclersView(viewState.result)
+                    }
+                    is ViewState.Failure -> {
+                        hideProgressBar()
+                        viewState.failMessage.let {
+                            it.showCustomToast(requireContext())
+                        }
+                    }
+                }
             }
         }
-//        performCoroutineTask {
-//            viewModel.getviewStateFlow().collect{ viewState->
-//                when(viewState){
-//                    is ViewState.Loading ->
-//                        showProgressBar()
-//                    is ViewState.Success -> {
-//                        setupRecyclersView(viewState.result)
-//                    }
-//                    is ViewState.Failure -> {
-//                        hideProgressBar()
-//                        viewState.failMessage.let {
-//                            it.showCustomToast(requireContext())
-//                        }
-//                    }
-//                }
-//            }
-//        }
     }
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         inflater.inflate(R.menu.list_menu_fragment, menu)
+
+        val searchItem = menu.findItem(R.id.menu_search)
+        val searchView = searchItem.actionView as SearchView
+
+        // Set up the SearchView
+        handleSearchView(searchView)
+
         super.onCreateOptionsMenu(menu, inflater)
     }
 

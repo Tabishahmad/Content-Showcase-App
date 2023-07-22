@@ -14,7 +14,7 @@ import com.example.fitpeo.databinding.FragmentBookFavouriteBinding
 import com.example.fitpeo.domain.model.Album
 import com.example.fitpeo.presentation.core.base.BaseFragment
 import com.example.fitpeo.presentation.list.AlbumListViewModel
-import com.example.fitpeo.presentation.list.ImageListAdapter
+import com.example.fitpeo.presentation.list.FavListAdapter
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
@@ -22,7 +22,7 @@ import kotlinx.coroutines.launch
 @AndroidEntryPoint
 class FavouriteAlbumFragment : BaseFragment<AlbumListViewModel,FragmentBookFavouriteBinding>(
     R.layout.fragment_book_favourite
-),ImageListAdapter.ItemClickListener {
+),FavListAdapter.ItemClickListener {
     override val viewModel: AlbumListViewModel by activityViewModels()
 
     override fun init() {

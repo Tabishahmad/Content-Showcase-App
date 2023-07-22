@@ -18,13 +18,17 @@ import dagger.hilt.android.components.ViewModelComponent
 class ViewModelModule {
 
     @Provides
-    fun provideIListRepository(dataSource: AlbumDataSource, context: Context): AlbumListRepository {
-        return AlbumListRepositoryImpl(dataSource,context)
+    fun provideIListRepository(context: Context,fileNames: List<String>): AlbumListRepository {
+        return AlbumListRepositoryImpl(context,fileNames)
     }
     @Provides
     fun provideAlbumUseCase(albumListRepository: AlbumListRepository,
                             dbRepository: AlbumDataBaseRepository):UseCase{
         return UseCase(GetRemoteListUseCase(albumListRepository),
             ManageAlbumFavoriteUseCase(dbRepository))
+    }
+    @Provides
+    fun provideFileNames(): List<String> {
+        return listOf("data1.json", "data2.json", "data3.json")
     }
 }

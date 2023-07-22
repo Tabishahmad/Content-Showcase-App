@@ -10,21 +10,12 @@
         android:layout_height="match_parent"
         android:background="@color/background_grey">
 
-        <androidx.appcompat.widget.SearchView
-            android:id="@+id/searchView"
-            android:layout_width="match_parent"
-            android:layout_height="50dp"
-            android:layout_margin="8dp"
-            android:iconifiedByDefault="false"
-            android:padding="4dp"
-            android:queryHint="Search Programming language" />
-
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/albumrv"
-            android:layout_below="@+id/searchView"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:clipToPadding="false"
+            android:layout_marginHorizontal="5dp"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
 
         <ProgressBar

@@ -10,5 +10,6 @@ import javax.inject.Inject
 class GetRemoteListUseCase @Inject constructor (
     private val repository: AlbumListRepository
 ) {
-    operator fun invoke(): Flow<PagingData<Album>> = repository.getAlbumList()
+    fun getAlbumList(): Flow<PagingData<Album>> = repository.getAlbumList()
+    fun searchAlbums(query : String): Flow<PagingData<Album>> = repository.searchAlbums(query)
 }

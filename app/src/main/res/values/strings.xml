@@ -1,6 +1,10 @@
 <resources>
-    <string name="app_name">Fitpeo</string>
+    <string name="app_name">DIANGAL</string>
+    <string name="activity_title">ROMANTIC COMEDY</string>
+    <string name="search_album">Search Album</string>
 
+    <string name="NA_detail">A detail page is not required for this task. I left the code part just to show how to handle multiple screens.</string>
+    <string name="NA_favourite">A favourite page is not required for this task. I left the code part just to show how to handle multiple screens.</string>
     <string name="listFragment_label">List Fragment</string>
     <string name="book_detail_fragment_label">Detail Fragment</string>
     <string name="favourite_fragment_label">Favourite Fragment</string>
@@ -9,7 +13,7 @@
 
     <!--SPLASH -->
     <string name="start_text_splash">START</string>
-    <string name="faild_to_retrive">Failed to retrieve data</string>
+    <string name="failed_to_retrieve">Failed to retrieve data</string>
     <string name="loading">Loading...</string>
     <string name="no_book_in_fav">NO ALBUM ADDED IN FAVOURITE</string>
     <string name="not_implemented">NOT IMPLEMENTED</string>

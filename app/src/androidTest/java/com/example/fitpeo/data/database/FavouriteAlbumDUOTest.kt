@@ -37,8 +37,8 @@ class FavouriteAlbumDUOTest : TestCase() {
 
     @Test
     fun addItem_shouldReturn_theItem_inFlow() = runTest {
-        val item1 = Album(1, 22, "A1B2", "Test Book", "http://www.example.com")
-        val item2 = Album(1, 23, "A2B3", "Test Book 2", "http://www.example.com")
+        val item1 = Album(1, "A1B2", "http://www.example.com")
+        val item2 = Album(1, "Test Book 2", "http://www.example.com")
         favouriteBookDUO.markFavouriteAlbum(item1)
         favouriteBookDUO.markFavouriteAlbum(item2)
 
@@ -49,8 +49,8 @@ class FavouriteAlbumDUOTest : TestCase() {
 
     @Test
     fun deletedItem_shouldNot_be_present_inFlow() = runTest() {
-        val item1 = Album(1, 22, "A1B2", "Test Book", "http://www.example.com")
-        val item2 = Album(1, 23, "A2B3", "Test Book 2", "http://www.example.com")
+        val item1 = Album(1, "A1B2", "http://www.example.com")
+        val item2 = Album(1, "Test Book 2", "http://www.example.com")
         favouriteBookDUO.markFavouriteAlbum(item1)
         favouriteBookDUO.markFavouriteAlbum(item2)
         favouriteBookDUO.removeAlbumFromFavorites(item2)
@@ -62,9 +62,9 @@ class FavouriteAlbumDUOTest : TestCase() {
 //
     @Test
     fun updateItem_shouldReturn_theItem_inFlow() = runTest {
-        val item1 = Album(1, 22, "A1B2", "Test Book", "http://www.example.com")
-        val item2 = Album(1, 23, "A2B3", "Test Book 2", "http://www.example.com")
-        val item3 = Album(1,23,"A2B3","Test Book 3","http://www.example.com")
+    val item1 = Album(1, "A1B2", "http://www.example.com")
+    val item2 = Album(1, "Test Book 2", "http://www.example.com")
+    val item3 = Album(1, "Test Book 2", "http://www.example.com")
 
         favouriteBookDUO.markFavouriteAlbum(item1)
         favouriteBookDUO.markFavouriteAlbum(item2)
