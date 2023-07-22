@@ -21,6 +21,9 @@ Welcome to the Content Showcase app, a beautifully designed Android application 
 
 3. **Seamless Lazy Loading:** The app efficiently loads content data from JSON files, residing in the API folder. As you scroll down, the app seamlessly fetches JSON pages one by one, ensuring a smooth and uninterrupted scrolling experience. You won't even notice the additional data loading, creating a delightful user experience.
 
+3. **Favorite Feature with ROOM DB:** The app offers a delightful "Favorite" feature, enabling users to mark their preferred content items as favorites. This data is efficiently stored using ROOM DB, ensuring quick access to the favorite items even across app sessions.
+
+3. **Android Splash API Integration:** The app embraces the latest technology by integrating the Android 12 Splash API, providing users with a visually captivating and engaging splash screen experience during app launch.
 
 **Architecture and Code Quality:**
 
