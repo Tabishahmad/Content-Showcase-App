@@ -21,6 +21,9 @@ class ImageListAdapter : PagingDataAdapter<Album,ImageListAdapter.ImageHolder>(I
        fun setImage(thumbnailURL:String?) {
             b.iv.byName(b.iv.context,thumbnailURL)
         }
+        fun setText(name:String?) {
+            b.itemName.setText(name)
+        }
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ImageHolder {
@@ -35,6 +38,7 @@ class ImageListAdapter : PagingDataAdapter<Album,ImageListAdapter.ImageHolder>(I
         val book = getItem(position)
         println("pageNumber $position")
         holder.setImage(book?.posterImage)
+        holder.setText(book?.name)
 //        holder.b.card.setOnClickListener {
 //            imageClickListener?.onItemClick(it, book, position)
 //        }
