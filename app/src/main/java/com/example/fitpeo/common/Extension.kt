@@ -1,6 +1,7 @@
 package com.example.fitpeo.common
 
 import android.content.Context
+import android.content.res.Resources
 import android.view.View
 import android.widget.ImageView
 import android.widget.Toast
@@ -9,6 +10,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
 import com.example.fitpeo.R
 import com.squareup.picasso.Picasso
+import kotlin.math.roundToInt
 
 
 //fun ImageView.loadImageWithGlide(context: Context, imageURL: String?) {
@@ -61,4 +63,8 @@ fun <T> LiveData<T>.observeOnce(lifecycleOwner: LifecycleOwner, observer: Observ
             removeObserver(this)
         }
     })
+}
+fun Int.dpToPx(): Int {
+    val density = Resources.getSystem().displayMetrics.density
+    return (this * density).roundToInt()
 }

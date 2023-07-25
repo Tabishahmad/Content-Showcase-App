@@ -22,8 +22,9 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
-            android:text="Fitpeo Tech Private Limited, Thank you for the assignment. Press the start button for the list screen."
+            android:text="DIAGNAL , Thank you for the assignment. Press the start button for the list screen."
             android:textSize="20dp"
+            android:padding="@dimen/_10sdp"
             android:textColor="@color/black"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"></TextView>

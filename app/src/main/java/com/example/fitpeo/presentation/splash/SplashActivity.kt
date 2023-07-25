@@ -8,7 +8,6 @@ import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import com.example.fitpeo.BR
 import com.example.fitpeo.R
 import com.example.fitpeo.common.isNetworkAvailable
-import com.example.fitpeo.common.observeOnce
 import com.example.fitpeo.common.showCustomToast
 import com.example.fitpeo.databinding.ActivitySplashBinding
 import com.example.fitpeo.presentation.FragmentContainerActivity

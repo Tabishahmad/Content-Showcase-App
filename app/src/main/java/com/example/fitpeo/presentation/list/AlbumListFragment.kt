@@ -9,18 +9,22 @@ import android.view.View
 import android.widget.Toast
 import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
+import androidx.paging.LoadState
 import androidx.paging.PagingData
-import androidx.paging.map
 import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.fitpeo.R
 import com.example.fitpeo.common.*
 import com.example.fitpeo.databinding.FragmentBookListBinding
 import com.example.fitpeo.domain.model.Album
 import com.example.fitpeo.presentation.core.ViewState
 import com.example.fitpeo.presentation.core.base.BaseFragment
+import com.example.fitpeo.presentation.favourite.SearchSuggestionsAdapter
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
 
@@ -30,10 +34,16 @@ class AlbumListFragment : BaseFragment<AlbumListViewModel,FragmentBookListBindin
 ),ImageListAdapter.ItemClickListener {
     override val viewModel: AlbumListViewModel by activityViewModels()
     lateinit var adapter : ImageListAdapter
+    lateinit var currentList : ArrayList<Album>
+    private val myCoroutineScope: CoroutineScope by lazy { lifecycleScope }
+    lateinit var searchView: SearchView
+    private var isQuerySetProgrammatically = false
+
     override fun init() {
         setHasOptionsMenu(true)
         viewModel.fetchList()
         adapter = ImageListAdapter()
+        currentList = ArrayList()
     }
     private fun hideProgressBar(){
         binding.albumprogressBar.hide()
@@ -41,12 +51,22 @@ class AlbumListFragment : BaseFragment<AlbumListViewModel,FragmentBookListBindin
     private fun showProgressBar(){
         binding.albumprogressBar.show()
     }
-    private fun setupRecyclersView(pagingData:PagingData<Album>){
+    private fun setupRecyclersView(pagingData: PagingData<Album>) {
         hideProgressBar()
         binding.albumrv.layoutManager = GridLayoutManager(requireContext(), getColumnCount())
         adapter.setClickListener(this)
         binding.albumrv.adapter = adapter
-        lifecycleScope.launch {
+
+        myCoroutineScope.launch {
+            adapter.loadStateFlow.collect { loadStates ->
+                // Check if the initial load state is REFRESH to ensure the data is loaded
+                if (loadStates.refresh is LoadState.NotLoading) {
+                    currentList = adapter.snapshot().items as ArrayList<Album>
+                }
+            }
+        }
+
+        myCoroutineScope.launch {
             adapter.submitData(pagingData)
         }
     }
@@ -58,7 +78,43 @@ class AlbumListFragment : BaseFragment<AlbumListViewModel,FragmentBookListBindin
             3 // Number of columns in portrait orientation
         }
     }
+    override fun initWithBinding(){
+        handleShowHintList()
+    }
+    private fun handleShowHintList(){
+        val adapter = SearchSuggestionsAdapter(){
+            isQuerySetProgrammatically = true
+            searchView.setQuery(it,false)
+            binding.suggestionsRecyclerView.visibility = View.GONE
+        }
+        binding.suggestionsRecyclerView.layoutManager = LinearLayoutManager(requireContext())
+        binding.suggestionsRecyclerView.adapter = adapter
 
+        searchSuggestionsLiveData.observe(viewLifecycleOwner){suggestions->
+            if (suggestions.isNotEmpty()) {
+                // Show the RecyclerView with search suggestions
+                binding.suggestionsRecyclerView.visibility = View.VISIBLE
+                adapter.clear()
+                adapter.submitList(suggestions)
+            } else {
+                // Hide the RecyclerView if there are no suggestions
+                binding.suggestionsRecyclerView.visibility = View.GONE
+            }
+        }
+    }
+    private val searchSuggestionsLiveData = MutableLiveData<List<String>>()
+
+    fun findSearchSuggestions(queryText: String) {
+        if (queryText.isNullOrBlank()) {
+            binding.suggestionsRecyclerView.visibility = View.GONE
+        } else {
+            val matchingAlbums = currentList.filter { album ->
+                album.name.contains(queryText, ignoreCase = true)
+            }
+            val albumNames = matchingAlbums.map { it.name }.distinct()
+            searchSuggestionsLiveData.postValue(albumNames)
+        }
+    }
     override fun onItemClick(view: View, any: Any, index: Int) {
 //        navigateToDetail(any as Album)
         requireContext().getString(R.string.NA_detail).showCustomToast(requireContext(), Toast.LENGTH_LONG)
@@ -74,18 +130,30 @@ class AlbumListFragment : BaseFragment<AlbumListViewModel,FragmentBookListBindin
     }
     private fun handleSearchView(searchView: SearchView){
         searchView.queryHint = requireContext().getString(R.string.search_album)
-        searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener{
+        searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
                 return false
             }
 
             override fun onQueryTextChange(newText: String?): Boolean {
+
+
                 if (newText.isNullOrBlank() || newText.length >= 3) {
                     viewModel.setSearchQuery(newText)
                 }
+                if (isQuerySetProgrammatically) {
+                    // The query was set programmatically, do not process further
+                    isQuerySetProgrammatically = false
+                    return true
+                }
+                if (newText != null) {
+                    findSearchSuggestions(newText)
+                }
+
                 return true
             }
         })
+
     }
     override fun observeViewModel() {
         performCoroutineTask {
@@ -126,9 +194,8 @@ class AlbumListFragment : BaseFragment<AlbumListViewModel,FragmentBookListBindin
         inflater.inflate(R.menu.list_menu_fragment, menu)
 
         val searchItem = menu.findItem(R.id.menu_search)
-        val searchView = searchItem.actionView as SearchView
+        searchView = searchItem.actionView as SearchView
 
-        // Set up the SearchView
         handleSearchView(searchView)
 
         super.onCreateOptionsMenu(menu, inflater)

@@ -4,6 +4,7 @@ import android.content.Context
 import android.view.View
 import android.widget.ImageButton
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.liveData
 import androidx.lifecycle.viewModelScope
@@ -11,6 +12,7 @@ import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
+import androidx.room.util.query
 import com.example.fitpeo.R
 import com.example.fitpeo.data.repository.local.JsonDataSource
 import com.example.fitpeo.domain.model.Album
@@ -20,6 +22,7 @@ import com.example.fitpeo.presentation.core.ViewState
 import com.example.fitpeo.presentation.core.base.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.ConflatedBroadcastChannel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -30,6 +33,7 @@ class AlbumListViewModel @Inject constructor(private val useCase: UseCase, priva
 
     private val _uiStateFlow = MutableStateFlow<ViewState>(ViewState.Loading)
     val uiStateFlow = _uiStateFlow.asLiveData()
+
 
     fun fetchList() {
         performCoroutineTask{

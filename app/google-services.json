@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "244244463075",
+    "project_id": "dingnal",
+    "storage_bucket": "dingnal.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:244244463075:android:2dfcee8519b9af19e874d6",
+        "android_client_info": {
+          "package_name": "com.example.fitpeo"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "244244463075-fl13aa2k2j3bjlb85jlrlpvc1vjvgu88.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA1NJb9lhpZS4wnp_jZ99ssmrejiIU_Gao"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "244244463075-fl13aa2k2j3bjlb85jlrlpvc1vjvgu88.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
