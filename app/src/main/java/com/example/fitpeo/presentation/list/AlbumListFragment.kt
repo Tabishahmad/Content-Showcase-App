@@ -80,6 +80,8 @@ class AlbumListFragment : BaseFragment<AlbumListViewModel,FragmentBookListBindin
     }
     override fun initWithBinding(){
         handleShowHintList()
+        // Enable the up navigation
+
     }
     private fun handleShowHintList(){
         val adapter = SearchSuggestionsAdapter(){

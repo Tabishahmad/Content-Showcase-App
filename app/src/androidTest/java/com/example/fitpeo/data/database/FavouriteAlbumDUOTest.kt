@@ -37,8 +37,8 @@ class FavouriteAlbumDUOTest : TestCase() {
 
     @Test
     fun addItem_shouldReturn_theItem_inFlow() = runTest {
-        val item1 = Album(1, "A1B2", "http://www.example.com")
-        val item2 = Album(1, "Test Book 2", "http://www.example.com")
+        val item1 = Album(1, "A1B2", "http://www.example.com",false)
+        val item2 = Album(1, "Test Book 2", "http://www.example.com",false)
         favouriteBookDUO.markFavouriteAlbum(item1)
         favouriteBookDUO.markFavouriteAlbum(item2)
 

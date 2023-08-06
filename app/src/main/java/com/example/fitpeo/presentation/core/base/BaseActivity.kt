@@ -25,6 +25,8 @@ abstract class BaseActivity<Binding : ViewDataBinding>(
         binding = DataBindingUtil.setContentView(this, layoutId)
         init()
         observeViewModel()
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+
     }
     open fun preSetContentViewInit(){}
     open fun init() {}

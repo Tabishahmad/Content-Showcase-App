@@ -20,7 +20,7 @@
                 android:id="@+id/albumrv"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_marginHorizontal="@dimen/_5sdp"
+                android:layout_marginHorizontal="@dimen/_4sdp"
                 android:clipToPadding="false"
                 app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
 
